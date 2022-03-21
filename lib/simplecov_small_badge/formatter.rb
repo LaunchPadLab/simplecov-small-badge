@@ -33,8 +33,8 @@ module SimpleCovSmallBadge
     end
 
     def state(covered_percent)
-      if line_coverage_minimum&.positive?
-        if covered_percent >= line_coverage_minimum
+      if coverage_minimum&.positive?
+        if covered_percent >= coverage_minimum
           'good'
         else
           'bad'
@@ -44,9 +44,11 @@ module SimpleCovSmallBadge
       end
     end
 
-    def line_coverage_minimum
-      minimums = SimpleCov.minimum_coverage
-      minimums.is_a?(Hash) ? minimums[:line] : minimums
+    def coverage_minimum
+      @coverage_minimum ||= begin
+        minimums = SimpleCov.minimum_coverage
+        minimums.is_a?(Hash) ? minimums[SimpleCov.primary_coverage] : minimums
+      end
     end
 
     def map_image_config(state)
